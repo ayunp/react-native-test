@@ -5,7 +5,7 @@ import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { RootStackParamList } from "../App";
 
 type LoginScreenProps = {
-  onLogin: () => void;
+  onLogin: (user?: { name?: string; email?: string; picture?: string; username?: string }) => void;
 };
 
 type StackNavProp = NativeStackNavigationProp<RootStackParamList, "Login">;
@@ -13,11 +13,11 @@ type StackNavProp = NativeStackNavigationProp<RootStackParamList, "Login">;
 export default function Login({ onLogin }: LoginScreenProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-    const nav = useNavigation<StackNavProp>();
+  const nav = useNavigation<StackNavProp>();
 
   const handleLogin = () => {
     if (username && password) {
-      onLogin();
+      onLogin({ username });
     } else {
       alert("Please enter username & password!");
     }
@@ -42,7 +42,8 @@ export default function Login({ onLogin }: LoginScreenProps) {
       />
       <Button title="LOGIN" onPress={handleLogin} />
       <View style={{ height: 10 }} />
-      <Button title="LOGIN with GOOGLE" onPress={() => nav.navigate("OAuthLogin")}/>
+      <Button title="LOGIN with GOOGLE" onPress={() => nav.navigate("OAuthLogin")}
+      />
     </View>
   );
 }
