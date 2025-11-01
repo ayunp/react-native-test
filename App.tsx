@@ -5,13 +5,13 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-import Dashboard from "./screens/Dashboard";
+import Dashboard from "./src/screens/Dashboard";
 // import Assesments from "./screens/Assesments";
 // import Rewards from "./screens/Rewards";
-import Profile from "./screens/Profile";
-import Details from "./screens/Details";
-import Login from "./screens/Login";
-import OAuthLogin from "./screens/OAuth-Login";
+import Profile from "./src/screens/Profile";
+import Details from "./src/screens/Details";
+import Login from "./src/screens/Login";
+import OAuthLogin from "./src/screens/OAuth-Login";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export type RootStackParamList = {

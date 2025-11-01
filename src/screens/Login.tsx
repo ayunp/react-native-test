@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
-import { RootStackParamList } from "../App";
+import { RootStackParamList } from "../../App";
 
 type LoginScreenProps = {
   onLogin: (user?: { name?: string; email?: string; picture?: string; username?: string }) => void;
