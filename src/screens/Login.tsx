@@ -64,13 +64,10 @@ export default function Login({ onLogin }: LoginScreenProps) {
           secureTextEntry
         />
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Log in</Text>
+          <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, styles.googleButton]}
-          onPress={() => nav.navigate("OAuthLogin")}
-        >
-          <Text style={styles.buttonText}>Log in with Google</Text>
+        <TouchableOpacity style={[styles.button, styles.googleButton]}onPress={() => nav.navigate("OAuthLogin")}>
+          <Text style={styles.buttonText}>Login with Google</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
