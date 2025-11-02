@@ -2,23 +2,25 @@ import React, { useEffect } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../App";
 import { useNavigation } from "@react-navigation/native";
-import { Button, StyleSheet, Text, View, ProgressBarAndroid } from "react-native";
+import { StyleSheet, Text, View, KeyboardAvoidingView, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { incrementSteps, reset } from "../redux/stepSlice";
 import store, { RootState } from "../redux/store";
 import * as Progress from 'react-native-progress';
+import { Ionicons } from "@expo/vector-icons";
 
 
 type DashboardNavProp = NativeStackNavigationProp<RootStackParamList, "Tabs">;
 
 export default function Dashboard() {
   const nav = useNavigation<DashboardNavProp>();  
-  const { steps, points } = useSelector((state: RootState) => state.vitality);
+  const { steps, points } = useSelector((state: RootState) => state.step);
+  const { name, username } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
     const unsubscribe = store.subscribe(() => {
-      console.log('*** Redux store:', store.getState());
+      console.log('*** Redux store:', store.getState().step);
     });
     return unsubscribe;
   }, []);
@@ -27,33 +29,139 @@ export default function Dashboard() {
 
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Dashboard</Text>
-      <Text>👣 Steps: {steps}</Text>
-      <Text>💎 Points: {points}</Text>
-      <View style={styles.buttons}>
-        <Button title="+ Add 100 Steps" onPress={() => dispatch(incrementSteps(100))}
-        />
-        <Button title="Reset" color="gray" onPress={() => dispatch(reset())} />
-      </View>
+    <KeyboardAvoidingView style={styles.container}>
+      <View style={styles.inner}>
+      <Text style={styles.title}>Hi, {name ? name : username}</Text>
 
-       <Text style={styles.progressText}>Progress</Text>
-      <Progress.Bar progress={progress} width={200} color="#4CAF50" />
-      <View>
-      <Button
-        title="Go to Details"
-        onPress={() => nav.navigate("Details", { id: 42 })}
-      />
+      <View style={styles.card}>
+        <View style={styles.statRow}>
+          <Ionicons name={'footsteps'} size={50} color={'#8B0023'} style={{paddingRight: 10}} />
+          <View>
+            <Text style={styles.label}>Steps:</Text>
+            <Text style={styles.value}>{steps.toLocaleString()}</Text>
+          </View>
+        </View>
+
+        <View style={[styles.statRow, { marginTop: 10 }]}>
+          <Ionicons name={'diamond'} size={50} color={'#8B0023'} style={{paddingRight: 10}} />
+          <View>
+            <Text style={styles.label}>Points:</Text>
+            <Text style={styles.value}>{points}</Text>
+          </View>
+        </View>
+      </View>
+    
+      <TouchableOpacity style={styles.addButton} onPress={() => dispatch(incrementSteps(100))}>
+        <Text style={styles.buttonText}>+ Add 100 Steps</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.resetButton} onPress={() => dispatch(reset())}>
+        <Text style={[styles.buttonText, {color:'#222'}]}>Reset</Text>
+      </TouchableOpacity>
+
+      <View style={{width:'100%'}}>
+        <Text style={styles.progressLabel}>Progress</Text>
+        <View style={{flexDirection:'row', alignItems:'center'}}>
+          <Progress.Bar
+            progress={progress}
+            width={null}
+            color="#ed1f3bff"
+            unfilledColor="#EDEDED"
+            borderWidth={0}
+            height={12}
+            style={styles.progressBar}
+          />
+          <Text style={styles.progressText}>{Math.round(progress * 100)}%</Text>
+        </View>
+
       </View>
     </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 10 },
-  buttons: { marginTop: 20, gap: 10 },
-  progressText: {}
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F9F9F9",
+    paddingTop: 80,
+  },
+  inner: {
+    marginHorizontal: 30,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "700",
+    marginBottom: 30,
+    color: "#68001aff",
+  },
+  card: {
+    width: "100%",
+    backgroundColor: "#F9F9F9",
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    marginBottom: 30,
+  },
+  statRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  label: {
+    fontSize: 16,
+    color: "#444",
+  },
+  value: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#222",
+  },
+  addButton: {
+    backgroundColor: "#c3142bff",
+    borderRadius: 6,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 15,
+    paddingHorizontal: 40,
+  },
+  resetButton: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  progressLabel: {
+    marginTop: 20,
+    fontSize: 14,
+    color: "#444",
+  },
+  progressBar: {
+    width: 200,
+    height: 6,
+    marginTop: 5,
+    borderRadius: 10,
+  },
+  progressText: {
+    marginLeft: 10,
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#444",
+  },
 });
 
 

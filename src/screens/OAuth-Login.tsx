@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Button, Image, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import * as WebBrowser from 'expo-web-browser'
 import * as AuthSession from 'expo-auth-session';
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/userSlice";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -19,6 +21,7 @@ const REDIRECT_URI = AuthSession.makeRedirectUri({
 export default function OAuthLogin({ onLogin }: LoginScreenProps) {
   const discovery = AuthSession.useAutoDiscovery("https://accounts.google.com");
   const [userInfo, setUserInfo] = useState<any>(null);
+  const dispatch = useDispatch();
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
@@ -45,6 +48,7 @@ export default function OAuthLogin({ onLogin }: LoginScreenProps) {
       const user = await res.json();
       setUserInfo(user);
       onLogin(user);
+      dispatch(setUser(user));
     } catch (e) {
       console.error("Failed to fetch user info", e);
     }

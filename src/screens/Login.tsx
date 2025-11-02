@@ -11,6 +11,9 @@ import {
   View,
 } from "react-native";
 import { RootStackParamList } from "../../App";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/userSlice";
+import store, { RootState } from "../redux/store";
 
 type LoginScreenProps = {
   onLogin: (user?: {
@@ -18,6 +21,7 @@ type LoginScreenProps = {
     email?: string;
     picture?: string;
     username?: string;
+    token?: string | null;
   }) => void;
 };
 
@@ -27,10 +31,13 @@ export default function Login({ onLogin }: LoginScreenProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const nav = useNavigation<StackNavProp>();
+  const dispatch = useDispatch();
 
   const handleLogin = () => {
     if (username && password) {
       onLogin({ username });
+      dispatch(setUser({username}));
+      console.log('*** Redux store login:', store.getState().user);
     } else {
       alert("Please enter username & password!");
     }

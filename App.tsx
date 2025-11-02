@@ -7,7 +7,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import Dashboard from "./src/screens/Dashboard";
 import Profile from "./src/screens/Profile";
-import Details from "./src/screens/Details";
 import Login from "./src/screens/Login";
 import OAuthLogin from "./src/screens/OAuth-Login";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -18,11 +17,10 @@ export type RootStackParamList = {
   Login: undefined;
   OAuthLogin: undefined;
   Tabs: undefined;
-  Details: { id: number };
 };
 
 export type TabParamList = {
-  Dashboard: undefined;
+  Dashboard: {user?: { name?: string; username?: string }};
   Assesments: undefined;
   Rewards: undefined;
   Profile: {user?: { name?: string; emai?: string; picture?: string; username?: string }};
@@ -42,7 +40,7 @@ function TabsNavigator({ onLogout }: { onLogout: () => void }) {
           if (route.name === "Profile") icon = "person-outline";
           return <Ionicons name={icon} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "#007aff",
+        tabBarActiveTintColor: "#f20b2aff",
         tabBarInactiveTintColor: "gray",
       })}
     >
@@ -54,7 +52,6 @@ function TabsNavigator({ onLogout }: { onLogout: () => void }) {
   );
 }
 
-// Main Stack Navigator
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState<boolean | null>(null);
 
@@ -97,7 +94,6 @@ export default function App() {
           <>
           <Stack.Screen name="Login">
             {(props) => (
-              // <Login {...props} onLogin={() => setIsLoggedIn(true)}></Login>
               <Login {...props} onLogin={handleLogin}></Login>
             )}
           </Stack.Screen>
@@ -112,7 +108,6 @@ export default function App() {
             <Stack.Screen name="Tabs" options={{ headerShown: false }}>
                {(props) => (<TabsNavigator {...props} onLogout={handleLogout}/>)}
             </Stack.Screen>
-            <Stack.Screen name="Details" component={Details}  options={{ headerShown: true }} />
           </>
         )}
       </Stack.Navigator>
