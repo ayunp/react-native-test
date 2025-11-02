@@ -44,7 +44,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text style={{ fontSize: 20 }}>Profile</Text>
       {user?.picture ? (<Image source={{ uri: user.picture }} style={styles.avatar}/>)
-      : (<Image source={require('../assets/default-avatar.png')} style={styles.avatar}/>)}
+      : (<Image source={require('../../assets/default-avatar.png')} style={styles.avatar}/>)}
       <Text style={{paddingTop: 10 }}>{user?.name ? user?.name : user?.username}</Text>
       {user?.email ? (<Text style={{paddingBottom: 10 }}>{user?.email}</Text>) : (<View style={{paddingBottom: 10 }} />)}
       <Button title="LOG OUT" onPress={handleLogout}/>

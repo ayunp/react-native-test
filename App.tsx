@@ -6,13 +6,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import Dashboard from "./src/screens/Dashboard";
-// import Assesments from "./screens/Assesments";
-// import Rewards from "./screens/Rewards";
 import Profile from "./src/screens/Profile";
 import Details from "./src/screens/Details";
 import Login from "./src/screens/Login";
 import OAuthLogin from "./src/screens/OAuth-Login";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Provider } from "react-redux";
+import store from "./src/redux/store";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -39,8 +39,6 @@ function TabsNavigator({ onLogout }: { onLogout: () => void }) {
         headerShown: false,
         tabBarIcon: ({ color, size }) => {
           let icon: keyof typeof Ionicons.glyphMap = "home";
-          // if (route.name === "Assesments") icon = "create-outline";
-          // if (route.name === "Rewards") icon = "ribbon-outline";
           if (route.name === "Profile") icon = "person-outline";
           return <Ionicons name={icon} size={size} color={color} />;
         },
@@ -49,8 +47,6 @@ function TabsNavigator({ onLogout }: { onLogout: () => void }) {
       })}
     >
       <Tab.Screen name="Dashboard" component={Dashboard} />
-      {/* <Tab.Screen name="Assesments" component={Assesments} /> */}
-      {/* <Tab.Screen name="Rewards" component={Rewards} /> */}
       <Tab.Screen name="Profile">
         {(props) => <Profile {...props} onLogout={onLogout} />}
       </Tab.Screen>
@@ -94,6 +90,7 @@ export default function App() {
   }
 
   return (
+    <Provider store={store}>
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!isLoggedIn ? (
@@ -120,5 +117,6 @@ export default function App() {
         )}
       </Stack.Navigator>
     </NavigationContainer>
+    </Provider>
   );
 }

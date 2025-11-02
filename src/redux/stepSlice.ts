@@ -9,7 +9,7 @@ const stepSlice = createSlice({
     reducers: {
         incrementSteps: (state, action) => {
             state.steps += action.payload;
-            state.points = Math.floor(state.steps/100);
+            state.points = Math.floor(state.steps/100); // setiap 100 langkah dapat 1 poin
         },
         reset: (state) => {
             state.steps = 0;

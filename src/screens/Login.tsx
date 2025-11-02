@@ -1,11 +1,24 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Image,
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { RootStackParamList } from "../../App";
 
 type LoginScreenProps = {
-  onLogin: (user?: { name?: string; email?: string; picture?: string; username?: string }) => void;
+  onLogin: (user?: {
+    name?: string;
+    email?: string;
+    picture?: string;
+    username?: string;
+  }) => void;
 };
 
 type StackNavProp = NativeStackNavigationProp<RootStackParamList, "Login">;
@@ -24,38 +37,94 @@ export default function Login({ onLogin }: LoginScreenProps) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <Button title="LOGIN" onPress={handleLogin} />
-      <View style={{ height: 10 }} />
-      <Button title="LOGIN with GOOGLE" onPress={() => nav.navigate("OAuthLogin")}
-      />
-    </View>
+    <KeyboardAvoidingView style={styles.container}>
+      <View style={styles.inner}>
+        <Image
+          source={require("../../assets/login-header.png")}
+          style={{ width: 300, height: 350, resizeMode: "contain" }}
+        />
+        <Text style={styles.title}>
+          Welcome Back!
+        </Text>
+        <Text style={styles.subtitle}>
+          Log in to continue your journey
+        </Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
+          autoCapitalize="none"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Log in</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, styles.googleButton]}
+          onPress={() => nav.navigate("OAuthLogin")}
+        >
+          <Text style={styles.buttonText}>Log in with Google</Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 20 },
-  title: { fontSize: 28, textAlign: "center", marginBottom: 24 },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 20,
+    backgroundColor: "#F9F9F9",
+  },
+  inner: {
+    marginHorizontal: 30,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  subtitle: {
+    textAlign: "center",
+    marginTop: 8,
+    marginBottom: 20,
+    color: "#666"
+  },
   input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
+    backgroundColor: "#fff",
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+    fontSize: 16,
+  },
+  button: {
+    backgroundColor: "#ed1f3bff",
+    borderRadius: 6,
+    paddingVertical: 14,
+    alignItems: "center",
     marginBottom: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 15,
+  },
+  googleButton: {
+    backgroundColor: "#c3142bff",
   }
 });
