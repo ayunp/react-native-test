@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Image, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as WebBrowser from 'expo-web-browser'
 import * as AuthSession from 'expo-auth-session';
 import { useDispatch } from "react-redux";
@@ -11,7 +11,9 @@ type LoginScreenProps = {
   onLogin: (user?: { name: string; email: string; picture: string }) => void;
 };
 
-const GOOGLE_CLIENT_ID = "435752227605-df00fm45fv1565efdip8ji2fi8c46k59.apps.googleusercontent.com";
+const WEB_CLIENT_ID = "435752227605-e8cvgppg1j23j13vc07k45fer3b2j5v4.apps.googleusercontent.com";
+const ANDROID_CLIENT_ID = "435752227605-df00fm45fv1565efdip8ji2fi8c46k59.apps.googleusercontent.com";
+
 const REDIRECT_URI = AuthSession.makeRedirectUri({
   scheme: "reactnativetest",
   preferLocalhost: false,
@@ -25,13 +27,16 @@ export default function OAuthLogin({ onLogin }: LoginScreenProps) {
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
-      clientId: GOOGLE_CLIENT_ID,
+      clientId: WEB_CLIENT_ID,
       redirectUri: REDIRECT_URI,
+      // clientId: ANDROID_CLIENT_ID,
+      // redirectUri: "reactnativetest://auth",
       scopes: ["openid", "profile", "email"],
       responseType: "id_token",
     },
     discovery
   );
+  console.log("*** redirectUri ", REDIRECT_URI)
 
   useEffect(() => {
     if (response?.type === "success") {
