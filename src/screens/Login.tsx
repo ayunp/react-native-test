@@ -13,7 +13,7 @@ import {
 import { RootStackParamList } from "../../App";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/userSlice";
-import store, { RootState } from "../redux/store";
+import store from "../redux/store";
 
 type LoginScreenProps = {
   onLogin: (user?: {
