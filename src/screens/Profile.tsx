@@ -1,6 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Image, KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { clearUser } from "../redux/userSlice";
 
 type ProfileScreenProps = {
   onLogout: () => void;
@@ -8,6 +12,8 @@ type ProfileScreenProps = {
 
 export default function Profile({ onLogout }: ProfileScreenProps) {
   const [user, setUser] = useState<{ name: string; email: string; photo?: string; username?: string } | null>(null);
+  const userData= useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const loadUser = async () => {
@@ -33,7 +39,15 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
         {
           text: 'Logout',
           style: 'destructive',
-          onPress: onLogout, 
+          onPress: async () => {
+            try {
+              await GoogleSignin.signOut();
+              dispatch(clearUser());
+              onLogout?.(); // optional callback to navigate, etc.
+            } catch (error) {
+              console.error("Error signing out: ", error);
+            }
+          }, 
         },
       ],
       { cancelable: true }
