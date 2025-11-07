@@ -7,7 +7,7 @@ type ProfileScreenProps = {
 };
 
 export default function Profile({ onLogout }: ProfileScreenProps) {
-  const [user, setUser] = useState<{ name: string; email: string; picture?: string; username?: string } | null>(null);
+  const [user, setUser] = useState<{ name: string; email: string; photo?: string; username?: string } | null>(null);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -44,7 +44,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
     <View style={styles.container}>
       <Text style={styles.title}>Profile</Text>
 
-      {user?.picture ? (<Image source={{ uri: user.picture }} style={styles.avatar} />)
+      {user?.photo ? (<Image source={{ uri: user.photo }} style={styles.avatar} />)
        : (<Image source={require("../../assets/default-avatar.png")} style={styles.avatar}/>)}
 
       <Text style={styles.name}> {user?.name ? user?.name : user?.username}</Text>
@@ -70,7 +70,11 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
     fontWeight: "700",
     marginBottom: 30,
   },
-    avatar: { width: 120, height: 120 },
+  avatar: { 
+    width: 120, 
+    height: 120,
+    borderRadius: 60
+  },
   name: {
     fontSize: 22,
     fontWeight: '700',

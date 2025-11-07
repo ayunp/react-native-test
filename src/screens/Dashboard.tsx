@@ -50,7 +50,7 @@ export default function Dashboard() {
       <View style={styles.inner}>
         <Image
           source={require("../../assets/running-man.png")}
-          style={{ width: 200, height: 200, resizeMode: "contain" }}
+          style={{ width: 200, height: 200, resizeMode: "contain", alignSelf: "center"}}
         />
         <Text style={styles.title}>Hi, {user?.name ? user?.name : user?.username}</Text>
 
@@ -186,9 +186,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 14,
     color: "#444",
+     fontWeight: "600",
   },
   progressBar: {
-    width: 200,
+    width: 280,
     height: 6,
     marginTop: 5,
     borderRadius: 10,

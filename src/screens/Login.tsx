@@ -26,11 +26,17 @@ type LoginScreenProps = {
     email?: string;
     photo?: string;
     username?: string;
-    // token?: string | null;
+    token?: string;
   }) => void;
 };
 
 type StackNavProp = NativeStackNavigationProp<RootStackParamList, "Login">;
+
+const WEB_CLIENT_ID = "435752227605-e8cvgppg1j23j13vc07k45fer3b2j5v4.apps.googleusercontent.com";
+
+GoogleSignin.configure({
+    webClientId: WEB_CLIENT_ID
+});
 
 export default function Login({ onLogin }: LoginScreenProps) {
   const [userInfo, setUserInfo] = useState<any>(null);
@@ -119,7 +125,7 @@ export default function Login({ onLogin }: LoginScreenProps) {
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.googleButton]} onPress={handleGoogleLogin}>
+        <TouchableOpacity style={[styles.button, {backgroundColor: Boolean(username || password) ? '#777373ff' : '#c3142bff'}]} onPress={handleGoogleLogin} disabled={Boolean(username || password)}>
           <Text style={styles.buttonText}>Login with Google</Text>
         </TouchableOpacity>
       </View>
@@ -173,8 +179,5 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "700",
     fontSize: 15,
-  },
-  googleButton: {
-    backgroundColor: "#c3142bff",
   }
 });
