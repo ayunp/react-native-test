@@ -13,21 +13,27 @@ import {
 import { RootStackParamList } from "../../App";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/userSlice";
-import store from "../redux/store";
+import {
+  GoogleSignin,
+  isErrorWithCode,
+  isSuccessResponse,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 
 type LoginScreenProps = {
   onLogin: (user?: {
     name?: string;
     email?: string;
-    picture?: string;
+    photo?: string;
     username?: string;
-    token?: string | null;
+    // token?: string | null;
   }) => void;
 };
 
 type StackNavProp = NativeStackNavigationProp<RootStackParamList, "Login">;
 
 export default function Login({ onLogin }: LoginScreenProps) {
+  const [userInfo, setUserInfo] = useState<any>(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const nav = useNavigation<StackNavProp>();
@@ -37,11 +43,51 @@ export default function Login({ onLogin }: LoginScreenProps) {
     if (username && password) {
       onLogin({ username });
       dispatch(setUser({username}));
-      console.log('*** Redux store login:', store.getState().user);
     } else {
       alert("Please enter username & password!");
     }
   };
+
+  const handleGoogleLogin = async () => {
+      try {
+        await GoogleSignin.hasPlayServices();
+        const response = await GoogleSignin.signIn();
+        if (isSuccessResponse(response)) {
+          const userData = response.data;
+          setUserInfo(userData);
+          if (userData && userData.user) {
+            onLogin({
+              name: userData.user.name!,
+              email: userData.user.email,
+              photo: userData.user.photo!,
+            });
+            dispatch(setUser({
+              name: userData.user.name!,
+              email: userData.user.email,
+              picture: userData.user.photo!,
+              token: userData.idToken
+            }));
+          }
+        } else {
+          console.log("log in was cancelled by user");
+        }
+      } catch (error) {
+        if (isErrorWithCode(error)) {
+          switch (error.code) {
+            case statusCodes.IN_PROGRESS:
+              alert("Log in already in progress")
+              break;
+            case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+              alert("Play services not available or outdated");
+              break;
+            default:
+            // some other error happened
+          }
+        } else {
+          alert("An error that's not related to google sign in occurred");
+        }
+      }
+    }
 
   return (
     <KeyboardAvoidingView style={styles.container}>
@@ -73,7 +119,7 @@ export default function Login({ onLogin }: LoginScreenProps) {
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.googleButton]}onPress={() => nav.navigate("OAuthLogin")}>
+        <TouchableOpacity style={[styles.button, styles.googleButton]} onPress={handleGoogleLogin}>
           <Text style={styles.buttonText}>Login with Google</Text>
         </TouchableOpacity>
       </View>

@@ -8,7 +8,7 @@ import { setUser } from "../redux/userSlice";
 WebBrowser.maybeCompleteAuthSession();
 
 type LoginScreenProps = {
-  onLogin: (user?: { name: string; email: string; picture: string }) => void;
+  onLogin: (user?: { name: string; email: string; photo: string }) => void;
 };
 
 const WEB_CLIENT_ID = "435752227605-e8cvgppg1j23j13vc07k45fer3b2j5v4.apps.googleusercontent.com";

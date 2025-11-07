@@ -1,5 +1,4 @@
-import { StatusBar } from "expo-status-bar";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import * as React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
@@ -8,21 +7,17 @@ import { Ionicons } from "@expo/vector-icons";
 import Dashboard from "./src/screens/Dashboard";
 import Profile from "./src/screens/Profile";
 import Login from "./src/screens/Login";
-import OAuthLogin from "./src/screens/OAuth-Login";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Provider } from "react-redux";
 import store from "./src/redux/store";
 
 export type RootStackParamList = {
   Login: undefined;
-  OAuthLogin: undefined;
   Tabs: undefined;
 };
 
 export type TabParamList = {
   Dashboard: {user?: { name?: string; username?: string }};
-  Assesments: undefined;
-  Rewards: undefined;
   Profile: {user?: { name?: string; emai?: string; picture?: string; username?: string }};
 };
 
@@ -91,18 +86,11 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!isLoggedIn ? (
-          <>
           <Stack.Screen name="Login">
             {(props) => (
               <Login {...props} onLogin={handleLogin}></Login>
             )}
           </Stack.Screen>
-          <Stack.Screen name="OAuthLogin" options={{ headerShown: true }}>
-            {(props) => (
-              <OAuthLogin {...props} onLogin={handleLogin}></OAuthLogin>
-            )}
-          </Stack.Screen>
-          </>
         ) : (
           <>
             <Stack.Screen name="Tabs" options={{ headerShown: false }}>
