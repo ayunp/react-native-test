@@ -10,6 +10,7 @@ import Login from "./src/screens/Login";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Provider } from "react-redux";
 import store from "./src/redux/store";
+import SyncFitbit from "./src/screens/SyncFitbit";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -18,6 +19,7 @@ export type RootStackParamList = {
 
 export type TabParamList = {
   Dashboard: {user?: { name?: string; username?: string }};
+  SyncFitbit: undefined;
   Profile: {user?: { name?: string; emai?: string; picture?: string; username?: string }};
 };
 
@@ -32,6 +34,7 @@ function TabsNavigator({ onLogout }: { onLogout: () => void }) {
         headerShown: false,
         tabBarIcon: ({ color, size }) => {
           let icon: keyof typeof Ionicons.glyphMap = "home";
+          if (route.name === "SyncFitbit") icon = "fitness-outline";
           if (route.name === "Profile") icon = "person-outline";
           return <Ionicons name={icon} size={size} color={color} />;
         },
@@ -40,6 +43,7 @@ function TabsNavigator({ onLogout }: { onLogout: () => void }) {
       })}
     >
       <Tab.Screen name="Dashboard" component={Dashboard} />
+      <Tab.Screen name="SyncFitbit" component={SyncFitbit} />
       <Tab.Screen name="Profile">
         {(props) => <Profile {...props} onLogout={onLogout} />}
       </Tab.Screen>
