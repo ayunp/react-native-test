@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
+import { Ionicons } from '@expo/vector-icons';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -119,16 +120,40 @@ export default function SyncFitbit() {
 
           <View style={styles.card}>
             <View style={styles.row}>
+            <Ionicons
+              name={"footsteps"}
+              size={50}
+              color={"#8B0023"}
+              style={{ paddingRight: 10 }}
+            />
+            <View>
               <Text style={styles.label}>Steps</Text>
-              <Text style={styles.value}>{steps ? steps?.toLocaleString() : 'No data'}</Text>
+              <Text style={styles.value}>{steps ? steps?.toLocaleString() : 0}</Text>
+            </View>
             </View>
             <View style={styles.row}>
+             <Ionicons
+              name={"heart"}
+              size={50}
+              color={"#8B0023"}
+              style={{ paddingRight: 10 }}
+            />
+            <View>
               <Text style={styles.label}>Heart rate</Text>
-              <Text style={styles.value}>{heartRate ? `${heartRate} bpm` : 'No data'}</Text>
+              <Text style={styles.value}>{heartRate ? heartRate : 0} bpm</Text>
+            </View>
             </View>
             <View style={styles.row}>
+             <Ionicons
+              name={"bed"}
+              size={50}
+              color={"#8B0023"}
+              style={{ paddingRight: 10 }}
+            />
+            <View>
               <Text style={styles.label}>Sleep</Text>
-              <Text style={styles.value}>{sleep ? sleep : 'No data'}</Text>
+              <Text style={styles.value}>{sleep ? sleep : 0}</Text>
+            </View>
             </View>
           </View>
 
@@ -187,21 +212,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
   },
-  card: {
+   card: {
     // width: "100%",
-    backgroundColor: "#FAFAFA",
-    borderRadius: 12,
+    backgroundColor: "#F9F9F9",
+    borderRadius: 16,
     padding: 20,
-    marginTop: 10,
     shadowColor: "#000",
     shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    marginBottom: 30,
   },
   row: {
     borderBottomColor: "#EAEAEA",
     borderBottomWidth: 1,
     paddingVertical: 12,
+    flexDirection: "row",
+    alignItems: "center"
   },
   label: {
     fontSize: 16,
