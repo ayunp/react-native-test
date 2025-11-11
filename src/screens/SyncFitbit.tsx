@@ -3,10 +3,12 @@ import { Alert, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-n
 import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { Ionicons } from '@expo/vector-icons';
+import { Buffer } from 'buffer';
 
 WebBrowser.maybeCompleteAuthSession();
 
 const clientId = "23TPZD";
+const clientSecret = "fcdf3ed84bad15bd27bbc2782fcec9bc";
 const redirectUri = AuthSession.makeRedirectUri({
   scheme: "reactnativetest",
   path: "auth",
@@ -44,21 +46,18 @@ export default function SyncFitbit() {
 
   const fetchFitbitData = async (accessToken: string) => {
     try {
-      // Get today’s activity data
       const activityRes = await fetch(
         "https://api.fitbit.com/1/user/-/activities/date/today.json",
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
       const activityData = await activityRes.json();
 
-      // Get heart rate
       const heartRes = await fetch(
         "https://api.fitbit.com/1/user/-/activities/heart/date/today/1d.json",
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
       const heartData = await heartRes.json();
 
-      // Get sleep data
       const sleepRes = await fetch(
         "https://api.fitbit.com/1.2/user/-/sleep/date/today.json",
         { headers: { Authorization: `Bearer ${accessToken}` } }
@@ -79,13 +78,39 @@ export default function SyncFitbit() {
     }
   };
 
+   const revokeFitbitToken = async () => {
+    if (!token) return;
+
+    try {
+      const encoded = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+
+      const res = await fetch("https://api.fitbit.com/oauth2/revoke", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Basic ${encoded}`,
+        },
+        body: `token=${token}`,
+      });
+
+      if (res.ok) {
+        console.log("✅ Fitbit token revoked successfully");
+      } else {
+        console.warn("⚠️ Fitbit revoke failed", await res.text());
+      }
+    } catch (error) {
+      console.error("Revoke error:", error);
+    }
+  };
+
    const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to disconnect Fitbit?", [
       { text: "Cancel", style: "cancel" },
       {
         text: "Logout",
         style: "destructive",
-        onPress: () => {
+        onPress: async () => {
+          await revokeFitbitToken();
           setToken(null);
           setSteps(null);
           setHeartRate(null);
@@ -157,7 +182,7 @@ export default function SyncFitbit() {
             </View>
           </View>
 
-          <TouchableOpacity style={[styles.button, {marginTop: 10, backgroundColor: '#c74657ff'}]} onPress={() => handleLogout()}>
+          <TouchableOpacity style={[styles.button, {marginTop: 10}]} onPress={() => handleLogout()}>
             <Text style={styles.buttonText}>Disconnect to Fitbit</Text>
           </TouchableOpacity>
         </View>
