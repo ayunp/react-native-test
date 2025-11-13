@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert,  Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { Ionicons } from '@expo/vector-icons';
@@ -20,12 +20,21 @@ const discovery = {
   revocationEndpoint: "https://api.fitbit.com/oauth2/revoke",
 };
 
+interface Profile {
+  age: number;
+  avatar: string;
+  displayName: string;
+  fullName: string;
+  [key: string]: any; // optional: allows extra fields from Fitbit
+}
+
 export default function SyncFitbit() {
   const [token, setToken] = useState<string | null>(null);
   const [steps, setSteps] = useState<number | null>(null);
   const [heartRate, setHeartRate] = useState<number | null>(null);
   const [sleep, setSleep] = useState<string | null>(null);
   const [lastSynced, setLastSynced] = useState<string | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
@@ -41,36 +50,45 @@ export default function SyncFitbit() {
     if (response?.type === "success") {
       const { access_token } = response.params;
       setToken(access_token);
+      fetchFitbitData(access_token);
     }
   }, [response]);
 
   const fetchFitbitData = async (accessToken: string) => {
     try {
+      const today = new Date().toISOString().split("T")[0];
+
       const activityRes = await fetch(
-        "https://api.fitbit.com/1/user/-/activities/date/today.json",
+        `https://api.fitbit.com/1/user/-/activities/date/${today}.json`,
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
       const activityData = await activityRes.json();
 
       const heartRes = await fetch(
-        "https://api.fitbit.com/1/user/-/activities/heart/date/today/1d.json",
+        `https://api.fitbit.com/1/user/-/activities/heart/date/${today}/1d.json`,
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
       const heartData = await heartRes.json();
 
       const sleepRes = await fetch(
-        "https://api.fitbit.com/1.2/user/-/sleep/date/today.json",
+        `https://api.fitbit.com/1.2/user/-/sleep/date/${today}.json`,
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
       const sleepData = await sleepRes.json();
 
-      setSteps(activityData.summary?.steps ?? 0);
-      setHeartRate(heartData["activities-heart"]?.[0]?.value?.restingHeartRate ?? 0);
+      const profileRes = await fetch(
+        "https://api.fitbit.com/1/user/-/profile.json",
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      const profileData = await profileRes.json();
 
       const minutesAsleep = sleepData.summary?.totalMinutesAsleep ?? 0;
       const h = Math.floor(minutesAsleep / 60);
       const m = minutesAsleep % 60;
       setSleep(`${h}h ${m}m`);
+      setSteps(activityData.summary?.steps ?? 0);
+      setHeartRate(heartData["activities-heart"]?.[0]?.value?.restingHeartRate ?? 0);
+      setProfile(profileData.user);
 
       setLastSynced(new Date().toLocaleTimeString());
     } catch (error) {
@@ -133,59 +151,78 @@ export default function SyncFitbit() {
         </>
       ) : (
         <>
-        <View style={styles.dataContainer}>
-          <Text style={styles.sectionTitle}>Sync status</Text>
-          <Text style={styles.subText}>
-            Last synced: {lastSynced ? `${lastSynced}` : "Just now"}
-          </Text>
+          <View style={styles.dataContainer}>
+            <View style={{marginBottom: 15}}>
+              {profile ? (
+                <>
+                  <Image
+                    source={{ uri: profile.avatar }}
+                    style={{ width: 100, height: 100, borderRadius: 50 }}
+                  />
+                  <Text style={styles.value}>{profile.fullName}</Text>
+                  <Text style={styles.sectionTitle}>{profile.age} years old</Text>
+                </>
+              ) : (
+                <Text>Loading profile...</Text>
+              )}
+            </View>
+            <Text style={styles.sectionTitle}>Sync status</Text>
+            <Text style={styles.subText}>
+              Last synced: {lastSynced ? `${lastSynced}` : "Just now"}
+            </Text>
 
-          <Text style={[styles.sectionTitle, { marginTop: 20 }]}>
-            Fetched Data
-          </Text>
+            <Text style={[styles.sectionTitle, { marginTop: 20 }]}>
+              Fetched Data
+            </Text>
 
-          <View style={styles.card}>
-            <View style={styles.row}>
-            <Ionicons
-              name={"footsteps"}
-              size={50}
-              color={"#8B0023"}
-              style={{ paddingRight: 10 }}
-            />
-            <View>
-              <Text style={styles.label}>Steps</Text>
-              <Text style={styles.value}>{steps ? steps?.toLocaleString() : 0}</Text>
+            <View style={styles.card}>
+              <View style={styles.row}>
+                <Ionicons
+                  name={"footsteps"}
+                  size={50}
+                  color={"#8B0023"}
+                  style={{ paddingRight: 10 }}
+                />
+                <View>
+                  <Text style={styles.label}>Steps</Text>
+                  <Text style={styles.value}>{steps?.toLocaleString()}</Text>
+                </View>
+              </View>
+              <View style={styles.row}>
+                <Ionicons
+                  name={"heart"}
+                  size={50}
+                  color={"#8B0023"}
+                  style={{ paddingRight: 10 }}
+                />
+                <View>
+                  <Text style={styles.label}>Heart rate</Text>
+                  <Text style={styles.value}>
+                    {heartRate} bpm
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.row}>
+                <Ionicons
+                  name={"bed"}
+                  size={50}
+                  color={"#8B0023"}
+                  style={{ paddingRight: 10 }}
+                />
+                <View>
+                  <Text style={styles.label}>Sleep</Text>
+                  <Text style={styles.value}>{sleep}</Text>
+                </View>
+              </View>
             </View>
-            </View>
-            <View style={styles.row}>
-             <Ionicons
-              name={"heart"}
-              size={50}
-              color={"#8B0023"}
-              style={{ paddingRight: 10 }}
-            />
-            <View>
-              <Text style={styles.label}>Heart rate</Text>
-              <Text style={styles.value}>{heartRate ? heartRate : 0} bpm</Text>
-            </View>
-            </View>
-            <View style={styles.row}>
-             <Ionicons
-              name={"bed"}
-              size={50}
-              color={"#8B0023"}
-              style={{ paddingRight: 10 }}
-            />
-            <View>
-              <Text style={styles.label}>Sleep</Text>
-              <Text style={styles.value}>{sleep ? sleep : 0}</Text>
-            </View>
-            </View>
+
+            <TouchableOpacity
+              style={[styles.button, { marginTop: 10 }]}
+              onPress={() => handleLogout()}
+            >
+              <Text style={styles.buttonText}>Disconnect to Fitbit</Text>
+            </TouchableOpacity>
           </View>
-
-          <TouchableOpacity style={[styles.button, {marginTop: 10}]} onPress={() => handleLogout()}>
-            <Text style={styles.buttonText}>Disconnect to Fitbit</Text>
-          </TouchableOpacity>
-        </View>
         </>
       )}
     </View>
