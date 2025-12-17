@@ -11,6 +11,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Provider } from "react-redux";
 import store from "./src/redux/store";
 import SyncFitbit from "./src/screens/SyncFitbit";
+import SyncHuawei from "./src/screens/SyncHuawei";
+import SyncGarmin from "./src/screens/SyncGarmin";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -20,6 +22,8 @@ export type RootStackParamList = {
 export type TabParamList = {
   Dashboard: {user?: { name?: string; username?: string }};
   SyncFitbit: undefined;
+  SyncHuawei: undefined;
+  SyncGarmin: undefined;
   Profile: {user?: { name?: string; emai?: string; picture?: string; username?: string }};
 };
 
@@ -35,6 +39,8 @@ function TabsNavigator({ onLogout }: { onLogout: () => void }) {
         tabBarIcon: ({ color, size }) => {
           let icon: keyof typeof Ionicons.glyphMap = "home";
           if (route.name === "SyncFitbit") icon = "fitness-outline";
+          if (route.name === "SyncHuawei") icon = "accessibility-outline";
+          if (route.name === "SyncGarmin") icon = "bicycle-outline";
           if (route.name === "Profile") icon = "person-outline";
           return <Ionicons name={icon} size={size} color={color} />;
         },
@@ -44,6 +50,8 @@ function TabsNavigator({ onLogout }: { onLogout: () => void }) {
     >
       <Tab.Screen name="Dashboard" component={Dashboard} />
       <Tab.Screen name="SyncFitbit" component={SyncFitbit} />
+      <Tab.Screen name="SyncHuawei" component={SyncHuawei} />
+      <Tab.Screen name="SyncGarmin" component={SyncGarmin} />
       <Tab.Screen name="Profile">
         {(props) => <Profile {...props} onLogout={onLogout} />}
       </Tab.Screen>

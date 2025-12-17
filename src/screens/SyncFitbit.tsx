@@ -144,9 +144,12 @@ export default function SyncFitbit() {
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       {!token ? (
         <>
-          <Text style={styles.title}>Connect to Fitbit</Text>
+          {/* <Text style={styles.title}>Connect to Fitbit</Text> */}
+          <Image source={require("../../assets/fitbit-logo.png")}
+            style={{ width: 200, height: 200, resizeMode: "contain", alignSelf: "center"}}
+            />
           <TouchableOpacity style={styles.button} onPress={() => promptAsync()}>
-            <Text style={styles.buttonText}>Login with Fitbit</Text>
+            <Text style={styles.buttonText}>Connect with Fitbit</Text>
           </TouchableOpacity>
         </>
       ) : (
@@ -160,7 +163,7 @@ export default function SyncFitbit() {
                     style={{ width: 100, height: 100, borderRadius: 50 }}
                   />
                   <Text style={styles.value}>{profile.fullName}</Text>
-                  <Text style={styles.sectionTitle}>{profile.age} years old</Text>
+                  {/* <Text style={styles.sectionTitle}>{profile.age} years old</Text> */}
                 </>
               ) : (
                 <Text>Loading profile...</Text>
@@ -183,9 +186,12 @@ export default function SyncFitbit() {
                   color={"#8B0023"}
                   style={{ paddingRight: 10 }}
                 />
+                
                 <View>
                   <Text style={styles.label}>Steps</Text>
-                  <Text style={styles.value}>{steps?.toLocaleString()}</Text>
+                  {
+                  steps ? (<Text style={styles.value}>{steps?.toLocaleString()}</Text>) : (<Text style={styles.value}>Loading Data...</Text>)
+                  }
                 </View>
               </View>
               <View style={styles.row}>
